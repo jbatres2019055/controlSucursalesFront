@@ -1,0 +1,24 @@
+<div class="main p-4">
+    <h1 class="text-center fw-bold">Dashboard</h1>
+    <hr><br>
+    <div class="overflow-auto maxheight container">
+        <br>
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-sm-12">
+                    <h1>Productos más vendidos</h1>
+                </div>
+                <div class="col-sm-12">
+                    <canvas baseChart 
+                        [datasets]="barChartData"
+                        [labels]="barChartLabels"
+                        [options]="barChartOptions"
+                        [plugins]="barChartPlugins"
+                        [legend]="barChartLegend"
+                        [chartType]="barChartType">
+                    </canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

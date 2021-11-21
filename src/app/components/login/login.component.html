@@ -1,0 +1,20 @@
+<body class="text-center">
+    <form class="form-signin" #login="ngForm" (ngSubmit)="onSubmit(login)">
+
+        <h1 class="h3 mb-3 font-weight-normal">Inicio de sesión</h1>
+
+        <label for="inputUsername" class="sr-only">Usuario</label><br><br>
+        <input [(ngModel)]="user.username" name="username" #username="ngModel" class="form-control" id="inputUsername" type="text" placeholder="Ingrese usuario" required>
+        <span *ngIf="!username.valid && username.touched">
+            Required
+        </span>
+        <br>
+        <label for="inputPassword" class="sr-only">Contraseña</label><br><br>
+        <input [(ngModel)]="user.password" name="password" #password="ngModel" class="form-control" id="inputPassword" type="password" placeholder="Ingrese contraseña" required>
+        <span *ngIf="!password.valid && password.touched">
+            Required
+        </span>
+        <br>
+        <button type="submit" class="btn btn-sm btn-primary" [disabled]="!login.form.valid">Iniciar Sesión</button>
+    </form>
+</body>

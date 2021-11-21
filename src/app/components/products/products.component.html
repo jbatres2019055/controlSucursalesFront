@@ -1,0 +1,154 @@
+<div class="main p-4">
+    <h1 class="fw-bold">Productos</h1>
+    <div class="row">
+        <form class="form-group col-md-4">
+            <div class="form-group">
+                <input [(ngModel)]="search" type="search" name="search" class="form-control inputTexto" placeholder="Ingrese el nombre del producto">
+            </div>
+        </form>
+        <form class="form-group col-md-4">
+            <select [(ngModel)]="type" name="order" id="inputType" class="form-select form-control"
+            (change)="onChange($event)">
+                <option selected>Ascendente</option>
+                <option>Descendente</option>
+            </select>
+        </form>
+        <form class="form-group col-md-4">
+            <div class="form-group" style="float: right;">
+                <a class="btn btn-success mb-2" data-bs-toggle="modal" data-bs-target="#createProduct">Agregar Producto</a>
+            </div>
+        </form>
+    </div>
+    <br>
+    <div class="row">
+        <div class="card col-sm-4" *ngFor="let product of products | search:search">
+            <div class="row g-0">
+              <div class="col-md-4">
+                <img src="./../../../assets/img/product.png" class="img-fluid rounded-start" alt="..." style="height: 100%;">
+              </div>
+              <div class="col-md-8">
+                <div class="card-body">
+                    <h5 class="card-title font-weight-bolder text-center">{{ product.name }}</h5>
+                    <p class="card-text">Proveedor: {{ product.supplier }}</p>
+                    <p class="card-text">Stock: {{ product.stock }}</p>
+                    <a class="btn btn-info mb-2" data-bs-toggle="modal" data-bs-target="#updateCompany" (click)="setCompanyInfo(product)">Editar</a><br>
+                    <a class="btn btn-danger mb-2" (click)="deleteProduct(product)">Eliminar</a><br>
+                    <a class="btn btn-primary mb-2" data-bs-toggle="modal" data-bs-target="#sendOffice" (click)="sendToOffice(product._id)">Enviar a sucursal</a><br>
+                </div>
+              </div>
+            </div>
+        </div>
+    </div>
+    <div *ngIf="products && products.length == 0">
+        <p class="text-muted">No hay productos</p>
+    </div>
+</div>
+
+<!-- Modal Crear Libro -->
+<div class="modal" id="createProduct" tabindex="-1" aria-labelledby="createProductLabel" aria-hidden="true">
+<div class="modal-dialog">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h5 class="modal-title" id="createProductLabel">Crear Producto</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+
+            <form #saveCompany="ngForm" (ngSubmit)="onSubmit(saveCompany)">
+                <div class="form-group">
+                    <label for="inputName">Nombre</label>
+                    <input [(ngModel)]="product.name" name="name" type="text" class="form-control" id="inputName">
+                </div>
+                <div class="row">
+                    <div class="form-group col-md-6">
+                        <label for="inputStock">Stock</label>
+                        <input [(ngModel)]="product.stock" name="stock" type="text" class="form-control" id="inputStock">
+                    </div>
+                    <div class="form-group col-md-6">
+                        <label for="inputPassword">Proveedor</label>
+                        <input [(ngModel)]="product.supplier" name="supplier" type="text" class="form-control" id="inputPassword">
+                    </div>
+                </div>
+                <div class="modal-footer row">
+                    <button type="submit" class="btn btn-success btn-block" [disabled]="!saveCompany.form.valid">Crear</button>
+                </div>
+            </form>
+
+
+
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+        </div>
+    </div>
+</div>
+</div>
+
+<!-- Modal Actualizar Libro -->
+<div class="modal" id="updateCompany" tabindex="-1" aria-labelledby="updateCompanyLabel" aria-hidden="true">
+<div class="modal-dialog">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h5 class="modal-title" id="updateCompanyLabel">Actualizar Producto</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" (click)="deleteCompanyInfo()"></button>
+        </div>
+        <div class="modal-body">
+            <form #updateProductForm="ngForm">
+                <div class="form-group">
+                    <label for="inputS">Proveedor</label>
+                    <input [(ngModel)]="product.supplier" name="supplier" type="text" class="form-control" id="inputS">
+                </div>
+                <div class="form-group">
+                    <label for="inputS">Cantidad</label>
+                    <input [(ngModel)]="product.stock" name="stock" type="text" class="form-control" id="inputS">
+                </div>
+                <!-- <div class="modal-footer row">
+                    <button type="submit" class="btn btn-success btn-block" [disabled]="!updateCompanyForm.form.valid" (click)="buyProduct(updateCompanyForm)">Comprar</button>
+                </div> -->
+            </form>
+        </div>
+        <div class="modal-footer">
+            <button type="submit" class="btn btn-success btn-block" (click)="updateProduct(updateProductForm)">Actualizar</button>
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" (click)="deleteCompanyInfo()">Cerrar</button>
+        </div>
+    </div>
+</div>
+</div>
+
+<!-- Modal Mandar a sucursal -->
+<div class="modal" id="sendOffice" tabindex="-1" aria-labelledby="updateCompanyLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="updateCompanyLabel">Enviar producto a</h5>
+                <button type="button" #closebutton class="btn-close" data-bs-dismiss="modal" aria-label="Close" (click)="deleteCompanyInfo()"></button>
+            </div>
+            <div class="modal-body">
+                <form #sendProductToOffice="ngForm" (ngSubmit)="sendToOffice(sendProductToOffice)">
+                    <div class="form-group">
+                        <label for="inputS">Cantidad</label>
+                        <input [(ngModel)]="stock" name="stock" type="text" class="form-control" id="inputS">
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-6 card books shadow-sm" *ngFor="let item of users" (click)="select(item)">
+                            <div class="card-body">
+                                <img src="./../../../assets/img/sucursal.png" class="card-img-top" alt="...">
+                                <h5 class="card-title font-weight-bolder text-center">{{item.name}}</h5>
+                                
+                            </div>
+                            <div class="alert alert-primary" role="alert" *ngIf="item.select">
+                                Seleccionado
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer row">
+                        <button type="submit" class="btn btn-success btn-block" [disabled]="!sendProductToOffice.form.valid" (click)="send(sendProductToOffice)">Enviar</button>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" (click)="deleteCompanyInfo()">Cerrar</button>
+            </div>
+        </div>
+    </div>
+    </div>

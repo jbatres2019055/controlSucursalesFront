@@ -1,0 +1,235 @@
+<div class="main p-4" *ngIf="token != null && userLocal.role != 'ROLE_ADMIN'">
+    <h1 class="fw-bold">Productos de la sucursal</h1>
+    <div class="row">
+        <form class="form-group col-md-4">
+            <div class="form-group">
+                <input [(ngModel)]="search" type="search" name="search" class="form-control inputTexto" placeholder="Ingrese nombre del producto/proveedor">
+            </div>
+        </form>
+        <form class="form-group col-sm-4">
+            <select [(ngModel)]="type" name="order" id="inputType" class="form-select form-control"
+            (change)="onChange($event)">
+                <option selected>Ascendente</option>
+                <option>Descendente</option>
+            </select>
+        </form>
+    </div>
+    <div class="row">
+        <div class="card col-sm-4" *ngFor="let item of products | search:search">
+            <div class="row g-0">
+              <div class="col-md-4">
+                <img src="./../../../assets/img/product.png" class="img-fluid rounded-start" alt="..." style="height: 100%;">
+              </div>
+              <div class="col-md-8">
+                <div class="card-body">
+                    <h5 class="card-title font-weight-bolder text-center">{{ item.products.name }}</h5>
+                    <p class="card-text"><strong>Stock: </strong> {{ item.products.stock }}</p>
+                    <p class="card-text"><strong>Stock vendido: </strong> {{ item.products.stockSelled || 0 }}</p>
+                    <p class="card-text"><strong>Proveedor: </strong> {{ item.products.supplier || '' }}</p>
+                    <button class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#sellProduct" 
+                    (click)="productTemp.stock = item.products.stock; productTemp.name = item.products.name; productTemp.stockSelled = item.products.stockSelled; productTemp._id = item.products._id;">
+                        vender
+                    </button>
+                </div>
+              </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="main p-4" *ngIf="token != null && userLocal.role == 'ROLE_ADMIN'">
+    <h1 class="fw-bold">Sucursales</h1>
+    <div class="row">
+        <form class="form-group col-md-6">
+            <div class="form-group">
+                <input [(ngModel)]="search" type="search" name="search" class="form-control inputTexto" placeholder="Ingrese el nombre de la empresa">
+            </div>
+        </form>
+        <form class="form-group col-md-6">
+            <div class="form-group" style="float: right;">
+                <a class="btn btn-success mb-2" data-bs-toggle="modal" data-bs-target="#createCompany">Crear sucursal</a>
+            </div>
+            <div class="form-group" style="float: right;">
+                <button class="btn mb-2 mr-2 btn-primary" (click)="pdf()">Generar pdf</button>
+            </div>
+        </form>
+    </div>
+    <div class="row">
+        <div class="card col-sm-4" *ngFor="let company of users | search:search">
+            <div class="row g-0">
+              <div class="col-md-4">
+                <img src="./../../../assets/img/sucursal.png" class="img-fluid rounded-start" alt="..." style="height: 100%;">
+              </div>
+              <div class="col-md-8">
+                <div class="card-body">
+                    <h5 class="card-title font-weight-bolder text-center">{{ company.name }}</h5>
+                    <p class="card-text"><strong>Dirección: </strong> {{ company.direccionSucursal || 'Sin dato' }}</p>
+                    <p class="card-text"><strong>Usuario: </strong> {{ company.username }}</p>
+                    <p class="card-text"><strong>Teléfono: </strong>{{ company.phone }}</p>
+                    <a class="btn btn-primary mb-2" data-bs-toggle="modal" data-bs-target="#updateCompany" (click)="setCompanyInfo(company)">Editar</a><br>
+                    <a class="btn btn-danger mb-2" (click)="deleteCompany(company)">Eliminar</a><br>
+                    <a class="btn btn-info" (click)="view(company)" data-bs-toggle="modal" data-bs-target="#viewProducts">Ver productos</a>
+                </div>
+              </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Crear Libro -->
+<div class="modal" id="createCompany" tabindex="-1" aria-labelledby="createCompanyLabel" aria-hidden="true">
+<div class="modal-dialog">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h5 class="modal-title" id="createCompanyLabel">Crear Empresa</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+
+            <form #saveCompany="ngForm" (ngSubmit)="onSubmit(saveCompany)">
+                <div class="form-group">
+                    <label for="inputName">Nombre</label>
+                    <input [(ngModel)]="user.name" name="name" type="text" class="form-control" id="inputName">
+                </div>
+                <div class="form-group">
+                    <label for="inputDir">Dirección</label>
+                    <input [(ngModel)]="user.direccionSucursal" name="direccionSucursal" type="text" class="form-control" id="inputDir">
+                </div>
+                <div class="row">
+                    <div class="form-group col-md-6">
+                        <label for="inputUsername">Username</label>
+                        <input [(ngModel)]="user.username" name="username" type="text" class="form-control" id="inputUsername">
+                    </div>
+                    <div class="form-group col-md-6">
+                        <label for="inputPassword">Contraseña</label>
+                        <input [(ngModel)]="user.password" name="password" type="text" class="form-control" id="inputPassword">
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="form-group col-md-6">
+                        <label for="inputEmail">Correo</label>
+                        <input [(ngModel)]="user.email" name="edition" type="email" class="form-control" id="inputEmail">
+                    </div>
+                    <div class="form-group col-md-6">
+                        <label for="inputPhone">Teléfono</label>
+                        <input [(ngModel)]="user.phone" name="phone" type="number" class="form-control" id="inputPhone">
+                    </div>
+                </div>
+                <div class="modal-footer row">
+                    <button type="submit" class="btn btn-success btn-block" [disabled]="!saveCompany.form.valid">Crear</button>
+                </div>
+            </form>
+
+
+
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+        </div>
+    </div>
+</div>
+</div>
+
+<div class="modal" id="updateCompany" tabindex="-1" aria-labelledby="updateCompanyLabel" aria-hidden="true">
+<div class="modal-dialog">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h5 class="modal-title" id="updateCompanyLabel">Actualizar Libro</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" (click)="deleteCompanyInfo()"></button>
+        </div>
+        <div class="modal-body">
+            <form #updateCompanyForm="ngForm">
+                <div class="form-group">
+                    <label for="inputName">Nombre</label>
+                    <input [(ngModel)]="user.name" name="name" type="text" class="form-control" id="inputName">
+                </div>
+                <div class="form-group">
+                    <label for="inputDir">Dirección</label>
+                    <input [(ngModel)]="user.direccionSucursal" name="direccionSucursal" type="text" class="form-control" id="inputDir">
+                </div>
+                <div class="form-group">
+                    <label for="inputUsername">Username</label>
+                    <input [(ngModel)]="user.username" name="username" type="text" class="form-control" id="inputUsername">
+                </div>
+                <div class="row">
+                    <div class="form-group col-md-6">
+                        <label for="inputEmail">Correo</label>
+                        <input [(ngModel)]="user.email" name="edition" type="email" class="form-control" id="inputEmail">
+                    </div>
+                    <div class="form-group col-md-6">
+                        <label for="inputPhone">Teléfono</label>
+                        <input [(ngModel)]="user.phone" name="phone" type="number" class="form-control" id="inputPhone">
+                    </div>
+                </div>
+                <div class="modal-footer row">
+                    <button type="submit" class="btn btn-success btn-block" [disabled]="!updateCompanyForm.form.valid" (click)="updateCompany(updateCompanyForm)">Actualizar</button>
+                </div>
+            </form>
+
+
+
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" (click)="deleteCompanyInfo()">Cerrar</button>
+        </div>
+    </div>
+</div>
+</div>
+
+<div class="modal" id="viewProducts" tabindex="-1" aria-labelledby="viewProducts" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-body">
+                <table class="table table-striped">
+                    <thead>
+                        <th>Nombre</th>
+                        <th>Stock</th>
+                        <th>Stock vendido</th>
+                        <!-- <th>Vender</th> -->
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let item of userTemp.products">
+                            <td>{{item.name}}</td>
+                            <td>{{item.stock}}</td>
+                            <td>{{item.stockSelled || 0 }}</td>
+                            <!-- <td>
+                                <button class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#sellProduct" (click)="productTemp = item">
+                                    vender
+                                </button>
+                            </td> -->
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal" id="sellProduct" tabindex="-1" aria-labelledby="sellProduct" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                {{productTemp.name}}
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" #closebutton></button>
+            </div>
+            <div class="modal-body">
+                <div>
+                    <strong>Stock Actual: </strong> <span>{{productTemp.stock}}</span>
+                </div>
+                <form #sellProd="ngForm">
+                    <div class="form-group">
+                        <label for="inputName">Cantidad</label>
+                        <input [(ngModel)]="productTemp.stockTemp" name="name" type="text" class="form-control" id="inputName">
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="submit" class="btn btn-success btn-block" [disabled]="!sellProd.form.valid" (click)="sellProducts(sellProd)">Vender</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+            </div>
+        </div>
+    </div>
+</div>

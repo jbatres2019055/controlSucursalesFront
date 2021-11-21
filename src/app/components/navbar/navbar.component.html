@@ -1,0 +1,34 @@
+<nav class="navbar navbar-expand-lg navbar-primary bg-primary text-light p-2 pe-4 ps-4">
+    <a class="navbar-brand fs-2" routerLink="/home"><i class="bi bi-kanban-fill"></i></a>
+  
+    <div class="collapse navbar-collapse mobile-view" id="navbarSupportedContent">
+        <ul class="navbar-nav mr-auto ps-4">
+            <li class="nav-item">
+                <a class="nav-link enter" routerLink="/home">Inicio</a>
+            </li>
+            <li *ngIf="token == null" class="nav-item">
+                <a class="nav-link enter" routerLink="/login">Login</a>
+            </li>
+            <li *ngIf="token != null && user.role != 'ROLE_ADMIN'" class="nav-item">
+                <a class="nav-link enter" routerLink="/dashboard">Grafica</a>
+            </li>
+            <li *ngIf="token != null && user.role != 'ROLE_ADMIN'" class="nav-item">
+                <a class="nav-link enter" routerLink="/companys">Productos del sucursal</a>
+            </li>
+            <li *ngIf="token != null && user.role == 'ROLE_ADMIN'" class="nav-item">
+                <a class="nav-link enter" routerLink="/products">Productos</a>
+            </li>
+            <li *ngIf="token != null && user.role == 'ROLE_ADMIN'" class="nav-item">
+                <a class="nav-link enter" routerLink="/companys">Sucursales</a>
+            </li>
+        </ul>
+        <div *ngIf="token != null" class="btn-group dropstart dark-enters dropdown-web">
+            <button type="button" class="btn dropdown-toggle fs-3 text-light" data-bs-toggle="dropdown" aria-expanded="false">
+                <i class="bi bi-gear-wide-connected text-light"> {{ user.username }} </i>
+            </button>
+            <ul class="dropdown-menu text-dark">
+                <li><a type="button" class="dropdown-item dark-enters" (click)="logOut()">Salir</a></li>
+            </ul>
+        </div>
+    </div>
+  </nav>

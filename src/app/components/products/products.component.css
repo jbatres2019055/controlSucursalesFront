@@ -1,0 +1,28 @@
+.main {
+    max-height: 80vh!important;
+    width: 85vw!important;
+    margin: 0 auto!important;
+    height: 80vh!important;
+}
+
+.jumbotron{
+    background: #0ce717;
+}
+
+.maxheight {
+    max-height: 30rem;
+}
+
+.minheight {
+    max-height: 25rem!important;
+    min-height: 15rem!important;
+}
+
+.userImage{
+    margin-top: 25px;
+}
+
+.inputTexto{
+    font-size: large!important;
+    border: 1px solid #DBE1EB;
+}
